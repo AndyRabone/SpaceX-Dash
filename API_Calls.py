@@ -112,15 +112,62 @@ Detailed info about Elon's Tesla roadster's current position
     Get roadster info : GET /roadster
 
 """
+def make_request(url):
+    req = urllib.request.Request("https://api.spacexdata.com/v4/{0}".format(url))
+    response = urllib.request.urlopen(req)
+    the_page = response.read()
+    json_payload = json.loads(the_page)
+    return json_payload
 
-req = urllib.request.Request('https://api.spacexdata.com/v4/payloads')
-response = urllib.request.urlopen(req)
-the_page = response.read()
+def get_type(json):
+    global type_
+    type_ = str(type(json_payload))
+    return type_
 
-json_dump = json.loads(the_page)
-print(json_dump[0])
+def parse_payload_list(payload):
+    """
+    Unpacks json from list if required.
+    """    
+    if type_ == "<class 'list'>":
+        payload = payload[0]
+    else:
+        payload = payload
+    return payload
 
-for v in json_dump:
-    print("Name: ", v["name"], "| Type:", v["type"], "| Customers: ", ", ".join(v["customers"]))
-#     print(v)
-    #print("{0} - {1}".format(i["name"], i["date_local"]))
+def get_key(json):
+    """
+    Return the 'key' element of the key valued pairs.
+    """
+    json_keys_list = []
+    if type_ == "<class 'list'>":
+        for k in json[0]:
+            json_keys_list.append(k)
+    else:
+        for k in json:
+            json_keys_list.append(k)
+    return json_keys_list
+
+def print_request(json_payload):
+    if type_ == "<class 'list'>":
+        for e in json_payload:
+            for k in keys:  
+                print("{0} - {1}".format(k, e["{0}".format(k)]))
+            print("\r\r\r")
+    else:
+        for k in keys:  
+            print("{0} - {1}".format(k, json_payload[k]))
+
+
+
+
+"""
+<<<<<<<<< Make request, check for nested content. >>>>>>>>>
+"""
+json_payload = make_request('ships')
+get_type(json_payload)
+
+"""
+E<<<<<<<<< Extract keys and print to terminal in readable format. >>>>>>>>>
+"""
+keys = get_key(json_payload)
+print_request(json_payload)
