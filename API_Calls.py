@@ -152,9 +152,11 @@ def print_request(json_payload):
         for e in json_payload:
             for k in keys: 
                 if type(e["{0}".format(k)]) == list:
+                    # TODO: Doesn't handle nested dicts very well.
                     print("{0} - {1}".format(k, ", ".join(e["{0}".format(k)])))
                 else:
                     print("{0} - {1}".format(k, e["{0}".format(k)]))
+                print("{0} - {1}".format(k, e["{0}".format(k)]))
             print("\r\r\r")
     else:
         for k in keys:  
@@ -166,7 +168,7 @@ def print_request(json_payload):
 """
 <<<<<<<<< Make request, check for nested content. >>>>>>>>>
 """
-json_payload = make_request('ships')
+json_payload = make_request('launches')
 get_type(json_payload)
 
 """
