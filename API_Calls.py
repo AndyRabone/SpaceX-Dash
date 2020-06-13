@@ -121,14 +121,14 @@ def make_request(url):
 
 def get_type(json):
     global type_
-    type_ = str(type(json_payload))
+    type_ = type(json_payload)
     return type_
 
 def parse_payload_list(payload):
     """
     Unpacks json from list if required.
     """    
-    if type_ == "<class 'list'>":
+    if type_ == list:
         payload = payload[0]
     else:
         payload = payload
@@ -139,7 +139,7 @@ def get_key(json):
     Return the 'key' element of the key valued pairs.
     """
     json_keys_list = []
-    if type_ == "<class 'list'>":
+    if type_ == list:
         for k in json[0]:
             json_keys_list.append(k)
     else:
@@ -148,10 +148,13 @@ def get_key(json):
     return json_keys_list
 
 def print_request(json_payload):
-    if type_ == "<class 'list'>":
+    if type_ == list:
         for e in json_payload:
-            for k in keys:  
-                print("{0} - {1}".format(k, e["{0}".format(k)]))
+            for k in keys: 
+                if type(e["{0}".format(k)]) == list:
+                    print("{0} - {1}".format(k, ", ".join(e["{0}".format(k)])))
+                else:
+                    print("{0} - {1}".format(k, e["{0}".format(k)]))
             print("\r\r\r")
     else:
         for k in keys:  
@@ -167,7 +170,7 @@ json_payload = make_request('ships')
 get_type(json_payload)
 
 """
-E<<<<<<<<< Extract keys and print to terminal in readable format. >>>>>>>>>
+<<<<<<<<< Extract keys and print to terminal in readable format. >>>>>>>>>
 """
 keys = get_key(json_payload)
 print_request(json_payload)
