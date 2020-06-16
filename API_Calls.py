@@ -150,29 +150,34 @@ def get_key(json):
 def print_request(json_payload):
     if type_ == list:
         for e in json_payload:
-            for k in keys: 
-                if type(e["{0}".format(k)]) == list:
-                    # TODO: Doesn't handle nested dicts very well.
+            for k in keys:
+                # Don't try to unpack nested dicts.
+                if type(e["{0}".format(k)]) == list and len(e["{0}".format(k)]) > 0 and type(e["{0}".format(k)][0]) != dict:
                     print("{0} - {1}".format(k, ", ".join(e["{0}".format(k)])))
+                
+                # Replace empty lists with 'None'
+                elif type(e["{0}".format(k)]) == list and len(e["{0}".format(k)]) == 0:
+                    print("{0} - {1}".format(k, "None"))
+                
                 else:
                     print("{0} - {1}".format(k, e["{0}".format(k)]))
-                print("{0} - {1}".format(k, e["{0}".format(k)]))
             print("\r\r\r")
     else:
         for k in keys:  
+            # Need to handle lists etc. here
             print("{0} - {1}".format(k, json_payload[k]))
-
 
 
 
 """
 <<<<<<<<< Make request, check for nested content. >>>>>>>>>
 """
-json_payload = make_request('launches')
+json_payload = make_request('ships')
 get_type(json_payload)
-
+print(get_type(json_payload))
 """
 <<<<<<<<< Extract keys and print to terminal in readable format. >>>>>>>>>
 """
 keys = get_key(json_payload)
 print_request(json_payload)
+
